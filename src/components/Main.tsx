@@ -6,6 +6,16 @@ import { Store } from "../reducers";
 
 import { connect } from "react-redux";
 
+import { VictoryBar, VictoryChart, VictoryTheme } from "victory";
+
+const prepareData = (data) => {
+    var arr = [];
+    for (var key in data) {
+        arr.push({x: key, y: data[key]});
+    }
+    return arr;
+}
+
 const Main = ({onDiceChange, onModChange, ...props}) => 
     <div>
         <input type="text" defaultValue={props.d4} onChange={(e) => onDiceChange("d4")(parseInt(e.target.value))}></input>
@@ -18,7 +28,9 @@ const Main = ({onDiceChange, onModChange, ...props}) =>
         <br />
         <br />
         <input type="text" defaultValue={props.modifier} onChange={(e) => onModChange(parseInt(e.target.value))}></input>
-        <h2>We're reloading baby!</h2>
+        <VictoryChart theme={VictoryTheme.material}>
+            <VictoryBar data={prepareData(props.data)} horizontal={true}/>
+            </VictoryChart>
     </div>;
 
 const mapStateToProps = (state) => {
