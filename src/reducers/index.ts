@@ -20,7 +20,7 @@ const initialState: Store = {
     modifier: 0,
     data: {},
     sum: 0,
-    TN: 8
+    targetNumber: 8
 };
 
 function handleAdv(arr: number[], adv: Adv): number[] {
@@ -159,6 +159,8 @@ export function _rollDice(state: Store = initialState, action: DiceAction) {
             state = assocPath(["modifier"], action.value, state);
             console.log(state.data);
             return state;
+        case "TN_CHANGE":
+            return assocPath(["targetNumber"], action.value, state);
         default:
             console.log("Original state.");
             const initRolls = getProbs(state);

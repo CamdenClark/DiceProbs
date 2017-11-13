@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { diceChange, modChange } from "../actions";
+import { diceChange, modChange, tnChange } from "../actions";
 
 import { Store } from "../interfaces";
 
@@ -10,15 +10,18 @@ import { DiceInput } from "./diceInput";
 
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryTheme } from "victory";
 
-const prepareData = (data) => {
+import { filter, keys, pick, sum, values } from "ramda";
+
+const prepareData = (data, tn: number) => {
     var arr = [];
     for (var key in data) {
-        arr.push({x: key, y: data[key]});
+        var color = (parseInt(key) >= tn) ? "green" : "red";
+        arr.push({x: key, y: data[key], fill: color});
     }
     return arr;
 }
 
-const Main = ({onDiceChange, onModChange, ...props}) => 
+const Main = ({onDiceChange, onModChange, onTNChange, ...props}) => 
     <div className="container">
         <div className="row">
         <DiceInput diceState={props.d4} onChange={onDiceChange("d4")} />
@@ -32,12 +35,19 @@ const Main = ({onDiceChange, onModChange, ...props}) =>
         <br />
         <div className="row">
             <div className="col-sm-9">
-        + <input type="text" defaultValue={props.modifier} onChange={(e) => onModChange(parseInt(e.target.value))}></input>
+
         <VictoryChart theme={VictoryTheme.material} domainPadding={1} height={250}>
             <VictoryAxis tickCount={5} crossAxis={true} />
             <VictoryAxis tickCount={5} crossAxis={true} dependentAxis={true} />
-            <VictoryBar data={prepareData(props.data)} />
+            <VictoryBar data={prepareData(props.data, props.targetNumber)} animate={{duration: 300}}/>
             </VictoryChart>
+            </div>
+            <div className="col-sm-2">
+            + <input type="text" defaultValue={props.modifier} onChange={(e) => onModChange(parseInt(e.target.value))}></input> <br />
+        TN: <input type="text" defaultValue={props.targetNumber} onChange={(e) => onTNChange(parseInt(e.target.value)) } /> <br />
+                {sum(values(pick(filter((num: string) => parseInt(num) >= props.targetNumber)(keys(props.data)), props.data))).toPrecision(5)}
+                <br />
+                {(1 - sum(values(pick(filter((num: string) => parseInt(num) >= props.targetNumber)(keys(props.data)), props.data)))).toPrecision(5)}
             </div>
             </div>
     </div>;
@@ -52,6 +62,7 @@ const mapStateToProps = (state) => {
         d20: state._rollDice.d20,
         d100: state._rollDice.d100,
         modifier: state._rollDice.modifier,
+        targetNumber: state._rollDice.targetNumber,
         data: state._rollDice.data
     };
 };
@@ -63,6 +74,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         onModChange: (value) => {
             dispatch(modChange(value));
+        },
+        onTNChange: (value) => {
+            dispatch(tnChange(value));
         }
     };
 };

@@ -20,5 +20,5 @@ export interface Store {
     modifier: number;
     data: {[index: number]: number};
     sum: number;
-    TN: number;
+    targetNumber: number;
 }
