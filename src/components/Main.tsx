@@ -2,11 +2,13 @@ import * as React from "react";
 
 import { diceChange, modChange } from "../actions";
 
-import { Store } from "../reducers";
+import { Store } from "../interfaces";
 
 import { connect } from "react-redux";
 
-import { VictoryBar, VictoryChart, VictoryTheme } from "victory";
+import { DiceInput } from "./diceInput";
+
+import { VictoryAxis, VictoryBar, VictoryChart, VictoryTheme } from "victory";
 
 const prepareData = (data) => {
     var arr = [];
@@ -17,20 +19,27 @@ const prepareData = (data) => {
 }
 
 const Main = ({onDiceChange, onModChange, ...props}) => 
-    <div>
-        <input type="text" defaultValue={props.d4} onChange={(e) => onDiceChange("d4")(parseInt(e.target.value))}></input>
-        <input type="text" defaultValue={props.d6} onChange={(e) => onDiceChange("d6")(parseInt(e.target.value))}></input>
-        <input type="text" defaultValue={props.d8} onChange={(e) => onDiceChange("d8")(parseInt(e.target.value))}></input>
-        <input type="text" defaultValue={props.d10} onChange={(e) => onDiceChange("d10")(parseInt(e.target.value))}></input>
-        <input type="text" defaultValue={props.d12} onChange={(e) => onDiceChange("d12")(parseInt(e.target.value))}></input>
-        <input type="text" defaultValue={props.d20} onChange={(e) => onDiceChange("d20")(parseInt(e.target.value))}></input>
-        <input type="text" defaultValue={props.d100} onChange={(e) => onDiceChange("d100")(parseInt(e.target.value))}></input>
+    <div className="container">
+        <div className="row">
+        <DiceInput diceState={props.d4} onChange={onDiceChange("d4")} />
+        <DiceInput diceState={props.d6} onChange={onDiceChange("d6")} />
+        <DiceInput diceState={props.d8} onChange={onDiceChange("d8")} />
+        <DiceInput diceState={props.d10} onChange={onDiceChange("d10")} />
+        <DiceInput diceState={props.d12} onChange={onDiceChange("d12")} />
+        <DiceInput diceState={props.d20} onChange={onDiceChange("d20")} />
+        <DiceInput diceState={props.d100} onChange={onDiceChange("d100")} />
+        </div>
         <br />
-        <br />
-        <input type="text" defaultValue={props.modifier} onChange={(e) => onModChange(parseInt(e.target.value))}></input>
-        <VictoryChart theme={VictoryTheme.material}>
-            <VictoryBar data={prepareData(props.data)} horizontal={true}/>
+        <div className="row">
+            <div className="col-sm-9">
+        + <input type="text" defaultValue={props.modifier} onChange={(e) => onModChange(parseInt(e.target.value))}></input>
+        <VictoryChart theme={VictoryTheme.material} domainPadding={1} height={250}>
+            <VictoryAxis tickCount={5} crossAxis={true} />
+            <VictoryAxis tickCount={5} crossAxis={true} dependentAxis={true} />
+            <VictoryBar data={prepareData(props.data)} />
             </VictoryChart>
+            </div>
+            </div>
     </div>;
 
 const mapStateToProps = (state) => {
@@ -49,8 +58,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        onDiceChange: (die) => (value) => {
-            dispatch(diceChange(die)(value));
+        onDiceChange: (die) => (adv) => (value) => {
+            dispatch(diceChange(die)(adv)(value));
         },
         onModChange: (value) => {
             dispatch(modChange(value));

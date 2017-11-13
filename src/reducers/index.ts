@@ -2,37 +2,52 @@ import { adjust, append, assocPath, concat, countBy, curry, identity, fromPairs,
 
 import { DiceAction } from "../actions";
 
-enum Adv {
-    Advantage = 1,
-    Flat = 0,
-    Disadvantage = -1
-}
+import { Adv, DiceState, Store } from "../interfaces";
 
-export interface Store {
-    d4: number;
-    d6: number;
-    d8: number;
-    d10: number;
-    d12: number;
-    d20: number;
-    d100: number;
-    modifier: number;
-    advantage: Adv;
-    data: {[index: number]: number};
+const defaultDice: DiceState = {
+    nDice: 0,
+    adv: Adv.Flat
 }
 
 const initialState: Store = {
-    d4: 0,
-    d6: 2,
-    d8: 0,
-    d10: 0,
-    d12: 0,
-    d20: 0,
-    d100: 0,
+    d4: defaultDice,
+    d6: {nDice: 2, adv: Adv.Flat},
+    d8: defaultDice,
+    d10: defaultDice,
+    d12: defaultDice,
+    d20: defaultDice,
+    d100: defaultDice,
     modifier: 0,
-    advantage: Adv.Flat,
-    data: {}
+    data: {},
+    sum: 0,
+    TN: 8
 };
+
+function handleAdv(arr: number[], adv: Adv): number[] {
+    if(adv === Adv.Flat) return arr;
+    var advArr = [];
+    if(adv === Adv.Advantage) {
+        advArr.push(arr[0] * arr[0]);
+        var cumSum = arr[0];
+        for (var i = 1; i < arr.length; i++) {
+            var nbefore = cumSum * cumSum;
+            cumSum = arr[i] + cumSum;
+            var ninclusive = cumSum * cumSum;
+            advArr.push(ninclusive - nbefore);
+        }
+    } else if (adv === Adv.Disadvantage) {
+        const len = arr.length;
+        advArr.push(arr[len - 1] * arr[len - 1]);
+        cumSum = arr[len - 1];
+        for (var i = len - 2; i >= 0; i--) {
+            var nafter = cumSum * cumSum;
+            cumSum = arr[i] + cumSum;
+            ninclusive = cumSum * cumSum;
+            advArr.unshift(ninclusive - nafter);
+        }
+    }
+    return advArr;
+}
 
 function _changeDice(state: Store = initialState, action: DiceAction): Store {
     console.log("_changeDice reducer called with state ", state, " and action ", action);
@@ -46,7 +61,7 @@ function _changeDice(state: Store = initialState, action: DiceAction): Store {
 }
 
 const getNumDice = (die: number, state: Store): number =>{
-    const temp: number = prop("d" + die, state);
+    const temp: number = state["d" + die]["nDice"];
     return temp;
 }
 
@@ -111,7 +126,7 @@ function getProbs(state: Store) {
                 }
             }
         }
-        finalProbs.push(probas[probas.length - 1]);
+        finalProbs.push(handleAdv(probas[probas.length - 1], state["d" + dice[iterDice]].adv));
     }
     const veryFinal = reduce(convolve, finalProbs[0], finalProbs.slice(1));
     return toDataObj(veryFinal);
@@ -130,12 +145,13 @@ export function _rollDice(state: Store = initialState, action: DiceAction) {
     switch (action.type) {
         case "DICE_CHANGE":
             if (action.value > 100 || isNaN(action.value)) return state;
-            state = assocPath([action.dice], action.value, state);
+            state = assocPath([action.dice, "nDice"], action.value, state);
+            state = assocPath([action.dice, "adv"], action.adv, state);
             const allRolls = getProbs(state);
             state = assocPath(["data"], allRolls, state);
             state = assocPath(["data"], incObj(state.data, state.modifier, 0), state);
             console.log(state);
-            return assocPath(["data"], allRolls, state);
+            return state;
         case "MOD_CHANGE":
             console.log(isNaN(action.value));
             if (isNaN(action.value)) return state;
