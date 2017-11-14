@@ -15,9 +15,9 @@ export type DiceAction = {
     value: number;
     adv: Adv;
     dice: number;
-}
+};
 
-export const diceChange = (dice: number) => (adv: Adv) => (value: number): DiceAction => 
+export const diceChange = (dice: number) => (adv: Adv) => (value: number): DiceAction =>
     ({
         type: "DICE_CHANGE",
         value,
@@ -31,7 +31,7 @@ export const modChange = (value: number): DiceAction =>
         value,
         adv: Adv.Flat,
         dice: 0
-    })
+    });
 
 export const tnChange = (value: number): DiceAction =>
     ({
@@ -39,4 +39,4 @@ export const tnChange = (value: number): DiceAction =>
         value,
         adv: Adv.Flat,
         dice: 0
-    })
+    });

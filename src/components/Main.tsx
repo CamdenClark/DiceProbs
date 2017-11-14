@@ -13,41 +13,49 @@ import { VictoryAxis, VictoryBar, VictoryChart, VictoryTheme } from "victory";
 import { filter, keys, pick, sum, values } from "ramda";
 
 const prepareData = (data, tn: number) => {
-    var arr = [];
-    for (var key in data) {
-        var color = (parseInt(key) >= tn) ? "green" : "red";
+    const arr = [];
+    for (const key in data) {
+        const color = (parseInt(key) >= tn) ? "green" : "red";
         arr.push({x: key, y: data[key], fill: color});
     }
     return arr;
-}
+};
 
-const Main = ({onDiceChange, onModChange, onTNChange, ...props}) => 
+const Main = ({onDiceChange, onModChange, onTNChange, ...props}) =>
     <div className="container">
         <div className="row">
-        <DiceInput diceState={props.d4} onChange={onDiceChange("d4")} />
-        <DiceInput diceState={props.d6} onChange={onDiceChange("d6")} />
-        <DiceInput diceState={props.d8} onChange={onDiceChange("d8")} />
-        <DiceInput diceState={props.d10} onChange={onDiceChange("d10")} />
-        <DiceInput diceState={props.d12} onChange={onDiceChange("d12")} />
-        <DiceInput diceState={props.d20} onChange={onDiceChange("d20")} />
-        <DiceInput diceState={props.d100} onChange={onDiceChange("d100")} />
+        <DiceInput diceState={props.d4} dice="d4" onChange={onDiceChange("d4")} />
+        <DiceInput diceState={props.d6} dice="d6" onChange={onDiceChange("d6")} />
+        <DiceInput diceState={props.d8} dice="d8" onChange={onDiceChange("d8")} />
+        <DiceInput diceState={props.d10} dice="d10" onChange={onDiceChange("d10")} />
+        <DiceInput diceState={props.d12} dice="d12" onChange={onDiceChange("d12")} />
+        <DiceInput diceState={props.d20} dice="d20" onChange={onDiceChange("d20")} />
+        <DiceInput diceState={props.d100} dice="d100" onChange={onDiceChange("d100")} />
         </div>
         <br />
         <div className="row">
-            <div className="col-sm-9">
+        <div className="col-sm-9">
 
-        <VictoryChart theme={VictoryTheme.material} domainPadding={1} height={250}>
+        <VictoryChart theme={VictoryTheme.material} domainPadding={1} height={200}>
             <VictoryAxis tickCount={5} crossAxis={true} />
             <VictoryAxis tickCount={5} crossAxis={true} dependentAxis={true} />
             <VictoryBar data={prepareData(props.data, props.targetNumber)} animate={{duration: 300}}/>
-            </VictoryChart>
-            </div>
-            <div className="col-sm-2">
-            + <input type="text" defaultValue={props.modifier} onChange={(e) => onModChange(parseInt(e.target.value))}></input> <br />
-        TN: <input type="text" defaultValue={props.targetNumber} onChange={(e) => onTNChange(parseInt(e.target.value)) } /> <br />
-                {sum(values(pick(filter((num: string) => parseInt(num) >= props.targetNumber)(keys(props.data)), props.data))).toPrecision(5)}
+        </VictoryChart>
+        </div>
+        <div className="col-sm-3">
+            + <input type="text"
+            defaultValue={props.modifier}
+            onChange={(e) => onModChange(parseInt(e.target.value))} /><br />
+        Target Number: <input type="text"
+            defaultValue={props.targetNumber}
+            onChange={(e) => onTNChange(parseInt(e.target.value)) } /> <br />
+        Chance greater or equal to TN: {sum(values(pick(
+            filter((num: string) => parseInt(num) >= props.targetNumber)
+            (keys(props.data)), props.data))).toPrecision(5)}
                 <br />
-                {(1 - sum(values(pick(filter((num: string) => parseInt(num) >= props.targetNumber)(keys(props.data)), props.data)))).toPrecision(5)}
+                Chance less than TN: {(1 - sum(values(pick(
+                    filter((num: string) => parseInt(num) >= props.targetNumber)
+                    (keys(props.data)), props.data)))).toPrecision(5)}
             </div>
             </div>
     </div>;
@@ -84,4 +92,3 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const connectedMain = connect(mapStateToProps, mapDispatchToProps)(Main);
 
 export default connectedMain;
-
