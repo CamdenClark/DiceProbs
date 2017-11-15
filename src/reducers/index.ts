@@ -1,7 +1,4 @@
-import { adjust, append, assocPath, concat,
-    countBy, curry, fromPairs, identity, lift,
-    map, mapObjIndexed, pipe, prop, range,
-    reduce, repeat, sum, toPairs, unnest, xprod } from "ramda";
+import { assocPath, reduce } from "ramda";
 
 import { DiceAction } from "../actions";
 
