@@ -142,12 +142,9 @@ const incObj = (obj, mod: number, prevMod: number) => {
 };
 
 export function _rollDice(state: Store = initialState, action: DiceAction) {
-    if (isNaN(action.value)) {
-        return state;
-    }
     switch (action.type) {
         case "DICE_CHANGE":
-            if (action.value > 100) {
+            if (action.value > 100 || isNaN(action.value)) {
                 return state;
             }
             state = assocPath([action.dice, "nDice"], action.value, state);
@@ -156,12 +153,17 @@ export function _rollDice(state: Store = initialState, action: DiceAction) {
             state = assocPath(["data"], incObj(state.data, state.modifier, 0), state);
             return state;
         case "MOD_CHANGE":
+            if (isNaN(action.value)) {
+                return state;
+            }
             const changeData = assocPath(["data"], incObj(state.data, action.value, state.modifier), state);
             return assocPath(["modifier"], action.value, changeData);
         case "TN_CHANGE":
+            if (isNaN(action.value)) {
+                return state;
+            }
             return assocPath(["targetNumber"], action.value, state);
         default:
-            const initRolls = getProbs(state);
-            return assocPath(["data"], initRolls, state);
+            return assocPath(["data"], getProbs(state), state);
     }
 }
