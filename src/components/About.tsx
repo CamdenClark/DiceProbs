@@ -14,6 +14,7 @@ export const About = () =>
         advantage from DnD 5e (roll twice, take the max of the rolls). However, advantage on 2d20 will compute
         the probability of taking the maximum of two independent 2d20 rolls.</p>
 
-        <p>I hope someone gets some use out of this! The code lives here, pull requests are welcome.
-        https://github.com/CamdenClark/DiceProbStuff</p>
+        <p>I hope someone gets some use out of this! <a href="https://github.com/CamdenClark/DiceProbs">
+            The code lives here</a>, pull requests are welcome.
+        </p>
     </div>;
