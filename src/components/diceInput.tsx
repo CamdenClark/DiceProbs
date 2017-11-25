@@ -13,7 +13,7 @@ export const DiceInput = ({dice, diceState, onChange}) =>
             defaultValue={diceState.nDice.toString()}
             onChange={(e) => onChange(diceState.adv)(parseInt(e.target.value))} />
         <br />
-        Disadv: <AdvInput diceState={diceState} onChange={onChange} adv={Adv.Disadvantage} />
+        Dis: <AdvInput diceState={diceState} onChange={onChange} adv={Adv.Disadvantage} />
         <br />
         Flat: <AdvInput diceState={diceState} onChange={onChange} adv={Adv.Flat} />
         <br />
