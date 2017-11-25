@@ -6,9 +6,11 @@ import { Store } from "../interfaces";
 
 import { connect } from "react-redux";
 
+import { Link, Route } from "react-router-dom";
+
 import { DiceInput } from "./diceInput";
 
-import { VictoryAxis, VictoryBar, VictoryChart, VictoryTheme } from "victory";
+import { VictoryAxis, VictoryBar, VictoryChart, VictoryTheme, } from "victory";
 
 import { filter, keys, map, pick, sum, values } from "ramda";
 
@@ -36,7 +38,8 @@ const Main = ({onDiceChange, onModChange, onTNChange, ...props}) =>
     <div className="container">
         <div className="row">
         {
-            map((die) => <DiceInput diceState={props[die]} dice={die} onChange={onDiceChange(die)} />, allDice)
+            map((die) => <DiceInput diceState={props[die]} key={die}
+                dice={die} onChange={onDiceChange(die)} />, allDice)
         }
         </div>
         <br />
@@ -45,7 +48,7 @@ const Main = ({onDiceChange, onModChange, onTNChange, ...props}) =>
                 <VictoryChart theme={VictoryTheme.material} domainPadding={1} height={200}>
                     <VictoryAxis tickCount={5} crossAxis={true} />
                     <VictoryAxis tickCount={5} crossAxis={true} dependentAxis={true} />
-                    <VictoryBar data={prepareData(props.data, props.targetNumber)} animate={{duration: 300}}/>
+                    <VictoryBar data={prepareData(props.data, props.targetNumber)} animate={{duration: 300}} />
                 </VictoryChart>
             </div>
             <div className="col-sm-3">
