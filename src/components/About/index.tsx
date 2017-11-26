@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export const About = () =>
+export const About = (): JSX.Element =>
     <div>
         <p>Ever wonder what the probability of rolling above a 12 when you have Advantage, Bless,
         and a d8 Bardic Inspiration?</p>
@@ -17,4 +17,9 @@ export const About = () =>
         <p>I hope someone gets some use out of this! <a href="https://github.com/CamdenClark/DiceProbs">
             The code lives here</a>, pull requests are welcome.
         </p>
+
+        <h3>Changelog:</h3>
+        <ul>
+            <li>Changed target number to range, fixed some UI awkwardness.</li>
+        </ul>
     </div>;

@@ -15,6 +15,12 @@ export type DiceAction = {
     value: number;
     adv: Adv;
     dice: number;
+} | {
+    type: "RANGE_CHANGE";
+    lower: number;
+    upper: number;
+    adv: Adv;
+    dice: number;
 };
 
 export const diceChange = (dice: number) => (adv: Adv) => (value: number): DiceAction =>
@@ -39,4 +45,13 @@ export const tnChange = (value: number): DiceAction =>
         value,
         adv: Adv.Flat,
         dice: 0
+    });
+
+export const rangeChange = (lower: number) => (upper: number): DiceAction =>
+    ({
+        type: "RANGE_CHANGE",
+        upper,
+        lower,
+        adv: Adv.Flat,
+        dice: 0,
     });

@@ -4,6 +4,11 @@ export enum Adv {
     Disadvantage = -1
 }
 
+export interface Range {
+    lower: number;
+    upper: number;
+}
+
 export interface DiceState {
     nDice: number;
     adv: Adv;
@@ -19,6 +24,6 @@ export interface Store {
     d100: DiceState;
     modifier: number;
     data: {[index: number]: number};
+    range: Range;
     sum: number;
-    targetNumber: number;
 }
