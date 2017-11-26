@@ -1,7 +1,6 @@
 import { assocPath, reduce } from "ramda";
 
 import { DiceAction } from "../actions";
-
 import { Adv, DiceState, Store } from "../interfaces";
 
 const defaultDice: DiceState = {
@@ -19,8 +18,8 @@ const initialState: Store = {
     d100: defaultDice,
     modifier: 0,
     data: {},
-    sum: 0,
-    targetNumber: 8
+    range: {lower: 0, upper: 8},
+    sum: 0
 };
 
 function handleAdv(arr: number[], adv: Adv): number[] {
@@ -82,7 +81,7 @@ const allZeros = (arr: number[]): boolean => {
     return true;
 };
 
-const toDataObj = (arr: number[]) => {
+const toDataObj = (arr: number[]): {[index: number]: number} => {
     const acc = {};
     for (let i = 0; i < arr.length; i++) {
         if (arr[i] !== 0) {
@@ -92,7 +91,7 @@ const toDataObj = (arr: number[]) => {
     return acc;
 };
 
-function getProbs(state: Store) {
+function getProbs(state: Store): {[index: number]: number} {
     let maxVal = 0;
     const dice = [4, 6, 8, 10, 12, 20, 100];
     const finalProbs = [];
@@ -160,6 +159,11 @@ export function _rollDice(state: Store = initialState, action: DiceAction) {
                 return state;
             }
             return assocPath(["targetNumber"], action.value, state);
+        case "RANGE_CHANGE":
+            if (isNaN(action.lower) || isNaN(action.upper)) {
+                return state;
+            }
+            return assocPath(["range"], {lower: action.lower, upper: action.upper}, state);
         default:
             return assocPath(["data"], getProbs(state), state);
     }
